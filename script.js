@@ -25,6 +25,7 @@ class Interface {
       
       // Highscore stuff
       // TODO - Display highscores on endscreen, add score entry 
+      this.paused = false;
       this.playField = playField;
       this.highscores = ['Ryan', 'John', 'Kyle', 'Dom', 'Emma'].map(
          (name, i) => {return [name, (i+1)*10000]});
@@ -48,6 +49,7 @@ class Interface {
          ArrowDown: "down",
          ArrowUp: "rotate",
          Space: "drop",
+         Enter: "toggle",
       }
       this.inputs = {
          left: false,
@@ -55,6 +57,7 @@ class Interface {
          down: false,
          drop: false,
          rotate: false,
+         toggle: false,
       }
       
       // Handles keyboard events
@@ -116,7 +119,12 @@ class Interface {
       let tetromino = this.playField.currentTetromino;
       let x = 0;
       let y = 0;
-      if(this.inputs.left) {
+      if(this.inputs.toggle) {
+         this.playField.paused = !this.playField.paused;
+         this.inputs.toggle = false;
+         return;
+      }
+      else if(this.inputs.left) {
          this.inputs.left = false;
          x = -1;
       }
@@ -134,10 +142,10 @@ class Interface {
       }
       else if(this.inputs.drop) {
          this.inputs.drop = false;
+         tetromino.fall();
          if(this.playField.gameOver) {
             this.playField.reset();
          }
-         tetromino.fall();
       }
       tetromino.move(x, y);
    }
@@ -160,6 +168,27 @@ class Interface {
       }
          
    }
+   drawPausedScreen() {
+      this.drawText(`PAUSED`, null, null, "32px");
+   }
+   drawPlayField() {
+      if(!(this.frame % this.framesPerTick)) {
+         this.playField.step();
+      }
+      this.playField.cells.forEach((cell) => {
+         this.drawCell(cell);
+
+      });
+      let startPos = [(this.w - 1)*this.cellSize, 0];
+      this.drawText(`Score: ${this.playField.score}`, 0, 16, '16px', 'left');
+      this.drawText(`Next tetromino: `, startPos[0], 16, "16px", "end");
+      this.playField.nextTetromino.cells.forEach((cell) => {
+         let relativePos = cell.relativePos();
+         let cellPos = [startPos[0] + relativePos[0]*this.cellSize/4, startPos[1] + relativePos[1]*this.cellSize/4];
+         this.drawCell(cell, cellPos, 1/4);
+      });
+
+   }
    clear() {
       this.ctx.beginPath();
       this.ctx.fillStyle = "rgb(20, 20, 20)";
@@ -173,23 +202,11 @@ class Interface {
       if(this.playField.gameOver) {
          this.drawEndScreen();
       }
+      else if (this.playField.paused) {
+         this.drawPausedScreen();
+      }
       else {
-         if(!(this.frame % this.framesPerTick)) {
-            this.playField.step();
-         }
-         this.playField.cells.forEach((cell) => {
-            this.drawCell(cell);
-
-         });
-         let startPos = [(this.w - 1)*this.cellSize, 0];
-         this.drawText(`Score: ${this.playField.score}`, 0, 16, '16px', 'left');
-         this.drawText(`Next tetromino: `, startPos[0], 16, "16px", "end");
-         this.playField.nextTetromino.cells.forEach((cell) => {
-            let relativePos = cell.relativePos();
-            let cellPos = [startPos[0] + relativePos[0]*this.cellSize/4, startPos[1] + relativePos[1]*this.cellSize/4];
-            this.drawCell(cell, cellPos, 1/4);
-         });
-         
+         this.drawPlayField();
       }
       window.requestAnimationFrame(this.refresh.bind(this));
    }
@@ -242,12 +259,13 @@ class PlayField {
       }
    }
    step() {
-      if(this.gameOver) {
+      if(this.gameOver || this.paused) {
          return; 
       }
       if(!this.currentTetromino.move(0, 1)) {
          if(this.currentTetromino.y == 0) {
             this.gameOver = true;
+            console.log("You died lol");
             this.display.highscores.push(['You', this.score]);
             this.display.cleanScores();
          }
