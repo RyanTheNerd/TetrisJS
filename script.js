@@ -143,7 +143,7 @@ class Interface {
       else if(this.inputs.drop) {
          this.inputs.drop = false;
          tetromino.fall();
-         if(this.playField.gameOver) {
+         if(this.playField.gameOver || this.playField.paused) {
             this.playField.reset();
          }
       }
@@ -169,7 +169,9 @@ class Interface {
          
    }
    drawPausedScreen() {
-      this.drawText(`PAUSED`, null, null, "32px");
+      this.drawPlayField();
+      this.drawText("PAUSED", null, null, "32px");
+      this.drawText("Press space to restart", this.canvas.width/2, this.canvas.height/2 + 45);
    }
    drawPlayField() {
       if(!(this.frame % this.framesPerTick)) {
@@ -303,6 +305,7 @@ class PlayField {
    }
    reset() {
       this.gameOver = false;
+      this.paused = false;
       this.cells = [];
       this.rows = [...Array(this.h)].map(e => Array());
       this.currentTetromino = new Tetromino(this, [3, 0], 'random');
