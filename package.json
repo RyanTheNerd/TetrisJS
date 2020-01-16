@@ -1,0 +1,29 @@
+{
+  "name": "tetrisjs",
+  "version": "1.0.0",
+  "description": "A tetris clone written in vanilla JS",
+  "main": "main.js",
+  "scripts": {
+    "test": "webpack -d --mode=development",
+    "build": "webpack --mode=production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RyanTheNerd/TetrisJS.git"
+  },
+  "keywords": [
+    "Tetris",
+    "Javascript",
+    "vanilla"
+  ],
+  "author": "Ryan Mattox",
+  "license": "GPL-2.0-only",
+  "bugs": {
+    "url": "https://github.com/RyanTheNerd/TetrisJS/issues"
+  },
+  "homepage": "https://github.com/RyanTheNerd/TetrisJS#readme",
+  "dependencies": {
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
+  }
+}

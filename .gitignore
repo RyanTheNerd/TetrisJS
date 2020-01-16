@@ -1,0 +1,4 @@
+.vscode/
+dist/main.js
+yarn.lock
+node_modules/
