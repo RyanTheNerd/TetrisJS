@@ -19,9 +19,11 @@ export default class PlayField {
             return cell;
          }
       }
+      // out of bounds
       if(x < this.w && x >= 0 && y < this.h && y >= 0) {
          return null;
       }
+      // Doesn't exist
       else {
          return false;
       }

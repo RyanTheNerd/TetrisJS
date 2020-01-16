@@ -24,12 +24,12 @@ export default class Tetromino {
       this.y = position[1];
       this.playField = playField;
       this.type = type;
-      this.rotationLock = false;
        
       if(this.type == "random") {
          let types = Object.keys(TetrominoPatterns);
          this.type = types[Math.floor(Math.random()*types.length)];
       }
+      this.rotationChart = (this.type == 'I') ? RotationChart.I : RotationChart.standard;
       
       let colors = {
          I: 'red', 
@@ -53,7 +53,7 @@ export default class Tetromino {
       ].forEach((y, j) => {
          y.forEach((x, k) => {
             if(this.pattern.includes(x)) {
-               let cell = new Cell(this, k + this.x, j + this.y, this.color, x);
+               let cell = new Cell(this.playField, this, k + this.x, j + this.y, this.color, x);
                this.cells.push(cell);
             }
          });
@@ -63,42 +63,28 @@ export default class Tetromino {
          this.playField.cells.push(...this.cells);
    }
    rotate() {
-      let moveableCells = [];
+      let rotateCount = 0;
       if("JLSTZI".includes(this.type)) {
          for(let cell of this.cells) {
-            let prevPos = cell.relativePos();
-            let rotationChart = (this.type == 'I') ? RotationChart.I : RotationChart.standard;
-            let newAddress = rotationChart[cell.address];
-            let newPos = cell.relativePos(newAddress);
-            let newX = cell.x + newPos[0] - prevPos[0]; 
-            let newY = cell.y + newPos[1] - prevPos[1];
-            let toCell = this.playField.getCell(newX, newY);
-            if(toCell == null || this.cells.includes(toCell)) {
-               moveableCells.push({cell: cell, x: newX, y: newY, addr: newAddress});
-            }
-            else {
-               return;
+            if(cell.canRotate()) {
+               rotateCount++;
             }
          }   
-         if(moveableCells.length == this.cells.length) {
-            for(let i of moveableCells) {
-               i.cell.x = i.x;
-               i.cell.y = i.y;
-               i.cell.address = i.addr;
+         if(rotateCount == this.cells.length) {
+            for(let cell of this.cells) {
+               cell.setNextState();
             }
          }
       }
    }
    move(x, y) {
-      
-      let moveableCells = [];
+      let moveCount = 0;
       for(let cell of this.cells) {
-         let toCell = this.playField.getCell(cell.x+x, cell.y+y);
-         if(toCell == null || this.cells.includes(toCell)) {
-            moveableCells.push(cell);
+         if(cell.canMoveTo(cell.x+x, cell.y+y)) {
+            moveCount++;
          }
       }
-      if (moveableCells.length == this.cells.length) {
+      if (moveCount == this.cells.length) {
          for(let cell of this.cells) {
             cell.x += x;
             cell.y += y;
@@ -115,7 +101,8 @@ export default class Tetromino {
 }
 
 export class Cell {
-   constructor(tetromino, x, y, color, address) {
+   constructor(playField, tetromino, x, y, color, address) {
+      this.playField = playField;
       this.tetromino = tetromino;
       this.x = x;
       this.y = y;
@@ -126,5 +113,33 @@ export class Cell {
       let x = addr % 4;
       let y = Math.floor(addr/4);
       return [x, y];
+   }
+   canRotate() {
+      let prevPos = this.relativePos();
+      let newAddress = this.tetromino.rotationChart[this.address];
+      let newPos = this.relativePos(newAddress);
+      let newX = this.x + newPos[0] - prevPos[0]; 
+      let newY = this.y + newPos[1] - prevPos[1];
+      return this.canMoveTo(newX, newY, newAddress);
+   }
+   canMoveTo(x, y, address = null) {
+      if (address == null) {
+         address = this.address;
+      }
+      let toCell = this.playField.getCell(x, y);
+      if(toCell == null || this.tetromino.cells.includes(toCell)) {
+         this.nextState = {x: x, y: y, address: address};
+         return true;
+      }
+      else {
+         this.nextState = null;
+         return false;
+      }
+   }
+   setNextState() {
+      for(let [key, value] of Object.entries(this.nextState)) {
+         this[key] = value;
+      }
+      this.nextState = null;
    }
 }
