@@ -62,11 +62,13 @@ export default class Tetromino {
    enable() {
          this.playField.cells.push(...this.cells);
    }
-   rotate() {
+   rotate(direction) {
       let rotateCount = 0;
       if("JLSTZI".includes(this.type)) {
          for(let cell of this.cells) {
-            if(cell.canRotate()) {
+            // canRotate changes cell.nextState to 
+               // the position after rotation if it returns true
+            if(cell.canRotate(direction)) {
                rotateCount++;
             }
          }   
@@ -114,9 +116,15 @@ export class Cell {
       let y = Math.floor(addr/4);
       return [x, y];
    }
-   canRotate() {
+   canRotate(direction) {
       let prevPos = this.relativePos();
-      let newAddress = this.tetromino.rotationChart[this.address];
+      let rotationChart = this.tetromino.rotationChart;
+      let newAddress = rotationChart[this.address];
+      if(direction == "left") {
+         for(let i = 0; i < 2; i++) {
+            newAddress = rotationChart[newAddress];
+         }
+      }
       let newPos = this.relativePos(newAddress);
       let newX = this.x + newPos[0] - prevPos[0]; 
       let newY = this.y + newPos[1] - prevPos[1];

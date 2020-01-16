@@ -4,7 +4,6 @@ export default class Interface {
       this.h = h;
       
       // Highscore stuff
-      // TODO - Display highscores on endscreen, add score entry 
       this.paused = false;
       this.playField = playField;
       this.highscores = ['Ryan', 'John', 'Kyle', 'Dom', 'Emma'].map(
@@ -27,7 +26,8 @@ export default class Interface {
          ArrowLeft: "left",
          ArrowRight: "right",
          ArrowDown: "down",
-         ArrowUp: "rotate",
+         KeyZ: "rotateLeft",
+         KeyX: "rotateRight",
          Space: "drop",
          Enter: "toggle",
       }
@@ -116,9 +116,13 @@ export default class Interface {
          this.inputs.down = false;
          y = 1;
       }
-      else if(this.inputs.rotate) {
-         this.inputs.rotate = false;
-         tetromino.rotate();
+      else if(this.inputs.rotateLeft) {
+         this.inputs.rotateLeft = false;
+         tetromino.rotate('left');
+      }
+      else if(this.inputs.rotateRight) {
+         this.inputs.rotateRight = false;
+         tetromino.rotate('right');
       }
       else if(this.inputs.drop) {
          this.inputs.drop = false;
