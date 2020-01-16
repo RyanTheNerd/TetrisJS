@@ -71,7 +71,7 @@ export default class Interface {
          let h = this.canvas.height;
          
          let boxes = {
-            rotate: [w/3, 0, w * 2/3, h*3/4],
+            rotateRight: [w/3, 0, w * 2/3, h*3/4],
             drop: [0, h * 3/4, w, h],
             left: [0, 0, w/3, h * 3/4],
             right: [w * 2/3, 0, w, h * 2/3],
