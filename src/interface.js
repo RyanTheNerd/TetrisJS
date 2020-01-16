@@ -26,8 +26,8 @@ export default class Interface {
          ArrowLeft: "left",
          ArrowRight: "right",
          ArrowDown: "down",
-         KeyZ: "rotateLeft",
-         KeyX: "rotateRight",
+         KeyD: "rotateLeft",
+         KeyF: "rotateRight",
          Space: "drop",
          Enter: "toggle",
       }
