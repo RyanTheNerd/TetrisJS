@@ -20,7 +20,8 @@ export default class PlayField {
          }
       }
       // out of bounds
-      if(x < this.w && x >= 0 && y < this.h && y >= 0) {
+      // Negative y value is still valid
+      if(x < this.w && x >= 0 && y < this.h) {
          return null;
       }
       // Doesn't exist
@@ -81,5 +82,4 @@ export default class PlayField {
       this.nextTetromino = new Tetromino(this, [3, 0], 'random');
       this.score = 0;
    }
-   
 }

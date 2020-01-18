@@ -1,5 +1,4 @@
-immediate next tetromino after drop
-allow cells to have negative y values
+drop guide
 
 list controls
 t spins
