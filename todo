@@ -1,0 +1,7 @@
+immediate next tetromino after drop
+allow cells to have negative y values
+
+list controls
+t spins
+swipe controls
+ranking backend

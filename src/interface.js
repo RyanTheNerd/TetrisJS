@@ -127,6 +127,7 @@ export default class Interface {
       else if(this.inputs.drop) {
          this.inputs.drop = false;
          tetromino.fall();
+         this.playField.step();
          if(this.playField.gameOver || this.playField.paused) {
             this.playField.reset();
          }
