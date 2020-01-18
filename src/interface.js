@@ -229,7 +229,9 @@ export default class Interface {
       let i;
       for(i = 0; tetromino.canMoveTo(0, i); i++) {};
       i--;
-      (i);
+      if(i <= 2) {
+         return;
+      }
 
       for(let cell of tetromino.cells) {
          let relPos = cell.relativePos();
