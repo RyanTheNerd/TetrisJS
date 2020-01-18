@@ -26,6 +26,7 @@ export default class Interface {
          ArrowLeft: "left",
          ArrowRight: "right",
          ArrowDown: "down",
+         ArrowUp: "rotateRight",
          KeyD: "rotateLeft",
          KeyF: "rotateRight",
          Space: "drop",
@@ -79,7 +80,6 @@ export default class Interface {
          for(let [boxName, box] of Object.entries(boxes)) {
             if(x > box[0] && x < box[2] && y > box[1] && y < box[3]) {
                this.inputs[boxName] = true;
-               console.log(boxName);
             }
          }
          
@@ -166,6 +166,7 @@ export default class Interface {
          this.drawCell(cell);
 
       });
+      this.drawTetrominoGuide(this.playField.currentTetromino);
       let startPos = [(this.w - 1)*this.cellSize, 0];
       this.drawText(`Score: ${this.playField.score}`, 0, 16, '16px', 'left');
       this.drawText(`Next tetromino: `, startPos[0], 16, "16px", "end");
@@ -197,23 +198,48 @@ export default class Interface {
       }
       window.requestAnimationFrame(this.refresh.bind(this));
    }
+   drawCube(x, y, fill, stroke, cellSize = this.cellSize) {
+      this.ctx.beginPath();
+      this.ctx.fillStyle = fill;
+      this.ctx.strokeStyle = stroke;
+      this.ctx.lineWidth = cellSize/this.cellSize * 4;
+      this.ctx.fillRect(x, y, cellSize, cellSize);
+      this.ctx.strokeRect(x, y, cellSize, cellSize);
+
+
+   }
    drawCell(cell, pos=null, scale=null) {
       if(pos == null) pos = [cell.x*this.cellSize, cell.y*this.cellSize];
       if(scale == null) scale = 1;
-      this.ctx.beginPath();
-      this.ctx.lineWidth = `${scale*4}`;
-      this.ctx.rect(pos[0], pos[1], this.cellSize*scale, this.cellSize*scale);
+      let cellSize, fill, stroke;
+      cellSize = this.cellSize*scale;
       if(cell != null && cell != undefined) {
-         this.ctx.strokeStyle = "white";
-         this.ctx.fillStyle = cell.color;
+         stroke = "white";
+         fill = cell.color;
       }
       else {
-         this.ctx.strokeStyle = "black";
-         this.ctx.fillStyle = "black";
+         stroke = "black";
+         fill = "black";
       }
-      this.ctx.closePath();
-      this.ctx.fill();
-      this.ctx.stroke();
+      this.drawCube(pos[0], pos[1], fill, stroke, cellSize);
       
+   }
+   drawTetrominoGuide(tetromino) {
+      // Find the lowest the tetromino can go
+      let i;
+      for(i = 0; tetromino.canMoveTo(0, i); i++) {};
+      i--;
+      (i);
+
+      for(let cell of tetromino.cells) {
+         let relPos = cell.relativePos();
+         let drawPos = [
+            cell.x * this.cellSize, 
+            (cell.y + i) * this.cellSize
+         ];
+
+         this.drawCube(drawPos[0], drawPos[1], "black", cell.color);
+      }
+
    }
 }

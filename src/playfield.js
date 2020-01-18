@@ -36,7 +36,6 @@ export default class PlayField {
       if(!this.currentTetromino.move(0, 1)) {
          if(this.currentTetromino.y == 0) {
             this.gameOver = true;
-            console.log("You died lol");
             this.display.highscores.push(['You', this.score]);
             this.display.cleanScores();
          }

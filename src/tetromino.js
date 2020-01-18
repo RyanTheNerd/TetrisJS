@@ -79,7 +79,7 @@ export default class Tetromino {
          }
       }
    }
-   move(x, y) {
+   canMoveTo(x, y) {
       let moveCount = 0;
       for(let cell of this.cells) {
          if(cell.canMoveTo(cell.x+x, cell.y+y)) {
@@ -87,6 +87,12 @@ export default class Tetromino {
          }
       }
       if (moveCount == this.cells.length) {
+         return true;
+      }
+      return false;
+   }
+   move(x, y) {
+      if(this.canMoveTo(x, y)) {
          for(let cell of this.cells) {
             cell.x += x;
             cell.y += y;
