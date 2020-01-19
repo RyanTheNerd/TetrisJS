@@ -24,10 +24,15 @@ export default class Tetromino {
       this.y = position[1];
       this.playField = playField;
       this.type = type;
+      this.prevType = null;
        
       if(this.type == "random") {
          let types = Object.keys(TetrominoPatterns);
          this.type = types[Math.floor(Math.random()*types.length)];
+         if(this.prevType == this.type) {
+            this.type = types[Math.floor(Math.random()*types.length)];
+         }
+         this.prevType = type;
       }
       this.rotationChart = (this.type == 'I') ? RotationChart.I : RotationChart.standard;
       

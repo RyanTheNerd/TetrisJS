@@ -1,21 +1,15 @@
 export default class Interface {
-   constructor(playField, w, h) {
-      this.w = w;
-      this.h = h;
-      
-      // Highscore stuff
-      this.paused = false;
-      this.playField = playField;
-      this.highscores = ['Ryan', 'John', 'Kyle', 'Dom', 'Emma'].map(
-         (name, i) => {return [name, (i+1)*10000]});
-      this.cleanScores();
+   constructor(config) {
+      this.w = config.w;
+      this.h = config.h;
+      this.game = config.game;
       
       // Canvas stuff
       this.canvas = document.createElement('canvas');
       document.body.appendChild(this.canvas);
       this.ctx = this.canvas.getContext('2d');
       this.frame = 0;
-      this.framesPerTick = 45;
+      this.framesPerTick = 30;
       
       this.canvas.height = window.innerHeight;
       this.cellSize = Math.floor(window.innerHeight / this.h);
@@ -89,18 +83,12 @@ export default class Interface {
       }.bind(this));
       this.refresh();
    }
-   cleanScores() {
-      this.highscores = this.highscores.sort(
-         (a, b) => {
-            return b[1] - a[1];
-         }).slice(0, 5);
-   }
    handleInput() {
-      let tetromino = this.playField.currentTetromino;
+      let tetromino = this.game.playField.currentTetromino;
       let x = 0;
       let y = 0;
       if(this.inputs.toggle) {
-         this.playField.paused = !this.playField.paused;
+         this.game.paused = !this.game.paused;
          this.inputs.toggle = false;
          return;
       }
@@ -127,9 +115,9 @@ export default class Interface {
       else if(this.inputs.drop) {
          this.inputs.drop = false;
          tetromino.fall();
-         this.playField.step();
-         if(this.playField.gameOver || this.playField.paused) {
-            this.playField.reset();
+         this.game.playField.step();
+         if(this.game.gameOver || this.game.paused) {
+            this.game.reset();
          }
       }
       tetromino.move(x, y);
@@ -147,8 +135,8 @@ export default class Interface {
       this.drawText("Press space to start", null, this.canvas.height - 50);
       if(this.frame % 120 > 60) this.drawText("Highscores: ", null, 250, "25px");
       this.drawText("Tetris", null, 100, "50px" );
-      for(let i in this.highscores) {
-         let score = this.highscores[i];
+      for(let i in this.game.scoreboard.scores) {
+         let score = this.game.scoreboard.scores[i];
          this.drawText(`${score[0]}: ${score[1]}`, null, 300 + i * 32);
       }
          
@@ -160,17 +148,17 @@ export default class Interface {
    }
    drawPlayField() {
       if(!(this.frame % this.framesPerTick)) {
-         this.playField.step();
+         this.game.playField.step();
       }
-      this.playField.cells.forEach((cell) => {
+      this.game.playField.cells.forEach((cell) => {
          this.drawCell(cell);
 
       });
-      this.drawTetrominoGuide(this.playField.currentTetromino);
+      this.drawTetrominoGuide(this.game.playField.currentTetromino);
       let startPos = [(this.w - 1)*this.cellSize, 0];
-      this.drawText(`Score: ${this.playField.score}`, 0, 16, '16px', 'left');
+      this.drawText(`Score: ${this.game.score}`, 0, 16, '16px', 'left');
       this.drawText(`Next tetromino: `, startPos[0], 16, "16px", "end");
-      this.playField.nextTetromino.cells.forEach((cell) => {
+      this.game.playField.nextTetromino.cells.forEach((cell) => {
          let relativePos = cell.relativePos();
          let cellPos = [startPos[0] + relativePos[0]*this.cellSize/4, startPos[1] + relativePos[1]*this.cellSize/4];
          this.drawCell(cell, cellPos, 1/4);
@@ -187,10 +175,10 @@ export default class Interface {
       this.frame++;
       this.handleInput();
       this.clear();
-      if(this.playField.gameOver) {
+      if(this.game.gameOver) {
          this.drawEndScreen();
       }
-      else if (this.playField.paused) {
+      else if (this.game.paused) {
          this.drawPausedScreen();
       }
       else {

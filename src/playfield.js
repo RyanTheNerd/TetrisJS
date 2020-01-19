@@ -3,15 +3,11 @@ import Tetromino from './tetromino';
 export default class PlayField {
    
    constructor(config) {
+      this.game = config.game;
       this.w = config.w;
       this.h = config.h;
-      this.score = 0;
       this.tetrisCount = 0;
-      
-      
       this.reset();
-      this.gameOver = true;
-      this.display = new Interface(this, this.w, this.h);
    }
    getCell(x, y) {
       for(let cell of this.cells) {
@@ -30,14 +26,14 @@ export default class PlayField {
       }
    }
    step() {
-      if(this.gameOver || this.paused) {
+      if(this.game.gameOver || this.game.paused) {
          return; 
       }
       if(!this.currentTetromino.move(0, 1)) {
          if(this.currentTetromino.y == 0) {
-            this.gameOver = true;
-            this.display.highscores.push(['You', this.score]);
-            this.display.cleanScores();
+            this.game.gameOver = true;
+            this.game.scoreboard.addScore('You', this.game.score);
+            this.game.scoreboard.cleanScores();
          }
          
          for(let cell of this.currentTetromino.cells) {
@@ -58,27 +54,35 @@ export default class PlayField {
             }
             if(clearedLines == 4) {
                this.tetrisCount++;
-               this.score += this.tetrisCount > 1 ? 1200 : 800;
+               this.game.score += this.tetrisCount > 1 ? 1200 : 800;
             }
             else {
                this.tetrisCount = 0;
-               this.score += clearedLines * 100;
+               this.game.score += clearedLines * 100;
             }
-            this.framesPerTick = Math.floor(this.score / 2500) + 45;
          }
+         let baseFPT = 30;
+         let fastestFPT = 5;
+         let FPT = baseFPT - Math.round((baseFPT - fastestFPT) * (this.game.score / 50000));
+         console.log(FPT);
+         if (FPT < fastestFPT) {
+            FPT = fastestFPT;
+         }
+         else if(FPT > baseFPT) {
+            FPT = baseFPT;
+         }
+         this.game.interface.framesPerTick = FPT;
+
          this.currentTetromino = this.nextTetromino;
          this.currentTetromino.enable(); 
          this.nextTetromino = new Tetromino(this, [3, 0], 'random');
       }
    }
    reset() {
-      this.gameOver = false;
-      this.paused = false;
       this.cells = [];
       this.rows = [...Array(this.h)].map(e => Array());
       this.currentTetromino = new Tetromino(this, [3, 0], 'random');
       this.currentTetromino.enable();
       this.nextTetromino = new Tetromino(this, [3, 0], 'random');
-      this.score = 0;
    }
 }
