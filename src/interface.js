@@ -23,8 +23,9 @@ export default class Interface {
          ArrowUp: "rotateRight",
          KeyD: "rotateLeft",
          KeyF: "rotateRight",
+         KeyR: "restart",
+         KeyP: "pause",
          Space: "drop",
-         Enter: "toggle",
       }
       this.inputs = {
          left: false,
@@ -32,7 +33,8 @@ export default class Interface {
          down: false,
          drop: false,
          rotate: false,
-         toggle: false,
+         pause: false,
+         restart: false,
       }
       
       // Handles keyboard events
@@ -87,10 +89,13 @@ export default class Interface {
       let tetromino = this.game.playField.currentTetromino;
       let x = 0;
       let y = 0;
-      if(this.inputs.toggle) {
+      if(this.inputs.pause) {
          this.game.paused = !this.game.paused;
-         this.inputs.toggle = false;
+         this.inputs.pause = false;
          return;
+      }
+      else if(this.inputs.restart) {
+         this.game.reset();
       }
       else if(this.inputs.left) {
          this.inputs.left = false;
@@ -114,10 +119,17 @@ export default class Interface {
       }
       else if(this.inputs.drop) {
          this.inputs.drop = false;
-         tetromino.fall();
-         this.game.playField.step();
-         if(this.game.gameOver || this.game.paused) {
+         if(this.game.gameOver) {
             this.game.reset();
+            this.game.gameOver = false;
+         }
+         else if(this.game.paused) {
+            this.game.paused = false;
+         
+         }
+         else {
+            tetromino.fall();
+            this.game.playField.step();
          }
       }
       tetromino.move(x, y);
@@ -144,7 +156,7 @@ export default class Interface {
    drawPausedScreen() {
       this.drawPlayField();
       this.drawText("PAUSED", null, null, "32px");
-      this.drawText("Press space to restart", this.canvas.width/2, this.canvas.height/2 + 45);
+      this.drawText("Press R to restart", this.canvas.width/2, this.canvas.height/2 + 45);
    }
    drawPlayField() {
       if(!(this.frame % this.framesPerTick)) {

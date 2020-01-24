@@ -2,3 +2,4 @@ list controls
 t spins
 swipe controls
 ranking backend
+more gradual increase in speed based on level, not score

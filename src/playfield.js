@@ -51,6 +51,10 @@ export default class PlayField {
                this.rows.splice(row, 1);
                this.rows.unshift(new Array());
                clearedLines++;
+               this.game.lines++;
+               console.log(`Lines cleared: ${this.game.lines}`);
+               this.game.changeLevel();
+               this.game.changeFPT();
             }
             if(clearedLines == 4) {
                this.tetrisCount++;
@@ -61,17 +65,6 @@ export default class PlayField {
                this.game.score += clearedLines * 100;
             }
          }
-         let baseFPT = 30;
-         let fastestFPT = 5;
-         let FPT = baseFPT - Math.round((baseFPT - fastestFPT) * (this.game.score / 50000));
-         console.log(FPT);
-         if (FPT < fastestFPT) {
-            FPT = fastestFPT;
-         }
-         else if(FPT > baseFPT) {
-            FPT = baseFPT;
-         }
-         this.game.interface.framesPerTick = FPT;
 
          this.currentTetromino = this.nextTetromino;
          this.currentTetromino.enable(); 
