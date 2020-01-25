@@ -27,6 +27,7 @@ export default class Interface {
          KeyF: "rotateRight",
          KeyR: "restart",
          KeyP: "pause",
+         Enter: "pause"
       }
       this.inputs = {
          left: false,
@@ -97,6 +98,7 @@ export default class Interface {
       }
       else if(this.inputs.restart) {
          this.game.reset();
+         this.inputs.restart = false;
       }
       else if(this.inputs.left) {
          this.inputs.left = false;
