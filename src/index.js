@@ -14,7 +14,6 @@ class Game {
          lineMax = 1e10;
       }
       this.startingLines = lineClear > lineMax ? lineMax : lineClear;
-      console.log(`Starting number of lines to increase level: ${this.startingLines}`);
       this.playField = new PlayField({
          game: this,
          w: 10,
@@ -42,29 +41,9 @@ class Game {
       else {
          this.level = this.startLevel + Math.ceil((this.lines - this.startingLines)/10);
       }
-      console.log(`Level: ${this.level}`);
    }
    changeFPT(level = this.level) {
-   //// https://tetris.wiki/Tetris_(NES,_Nintendo)
-   //   let fpt;
-   //   if(level <= 8) {
-   //      fpt = 48 - (5*level);
-   //   }
-   //   else if(level == 9) {
-   //      fpt = 6;
-   //   }
-   //   else if(level <= 18) {
-   //      fpt =  6 - Math.floor((level-7)/3);
-   //   }
-   //   else if(level <= 28) {
-   //      fpt = 2;
-   //   }
-   //   else {
-   //      fpt = 1;
-   //   }
       let fpt = 48 - Math.floor(Math.log10(this.level + 1) * 32);
-      console.log(`Lines: ${this.lines}`);
-      console.log(`FPT: ${fpt}`);
       if(fpt < 1) fpt = 1;
       if(fpt == this.interface.framesPerTick) {
          return false;
@@ -79,3 +58,4 @@ for(let i = 0; i < 30; i++) {
    game.changeLevel();
    game.changeFPT();
 }
+

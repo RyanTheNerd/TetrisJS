@@ -58,7 +58,6 @@ export default class PlayField {
                this.rows.unshift(new Array());
                clearedLines++;
                this.game.lines++;
-               console.log(`Lines cleared: ${this.game.lines}`);
                this.game.changeLevel();
                this.game.changeFPT();
             }

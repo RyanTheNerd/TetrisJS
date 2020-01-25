@@ -1,3 +1,4 @@
+import RNG from './rng';
 const TetrominoPatterns =  {
    'I': [4, 5, 6, 7],  // I 
    'J': [0, 4, 5, 6],  // J
@@ -17,6 +18,7 @@ const RotationChart = {
    standard: [2, 6, 10, null, 1, 5, 9, null, 0, 4, 8],
    I: [3, 7, 11, 15, 2, 6, 10, 14, 1, 5, 9, 13, 0, 4, 8, 12],
 }
+const rng = new RNG();
 
 export default class Tetromino {
    constructor(playField, position, type) {
@@ -28,11 +30,7 @@ export default class Tetromino {
        
       if(this.type == "random") {
          let types = Object.keys(TetrominoPatterns);
-         this.type = types[Math.floor(Math.random()*types.length)];
-         if(this.prevType == this.type) {
-            this.type = types[Math.floor(Math.random()*types.length)];
-         }
-         this.prevType = type;
+         this.type = rng.randomTetromino();
       }
       this.rotationChart = (this.type == 'I') ? RotationChart.I : RotationChart.standard;
       

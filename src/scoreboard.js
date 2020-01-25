@@ -14,7 +14,6 @@ export default class Scoreboard {
       else {
          this.scores = localScores;
       }
-      console.log(this.scores);
       this.cleanScores();
    }
    addScore(name, score) {
