@@ -23,8 +23,8 @@ export default class Interface {
          Space: "drop",
          KeyS: "softdrop",
          ArrowUp: "rotateRight",
-         KeyD: "rotateLeft",
          KeyF: "rotateRight",
+         KeyD: "rotateLeft",
          KeyR: "restart",
          KeyP: "pause",
          Enter: "pause"
@@ -162,8 +162,13 @@ export default class Interface {
    }
    drawPausedScreen() {
       this.drawPlayField();
-      this.drawText("PAUSED", null, null, "32px");
-      this.drawText("Press R to restart", this.canvas.width/2, this.canvas.height/2 + 45);
+      this.drawText("PAUSED", null, 150, "32px");
+      this.drawText("Press R to restart", this.canvas.width/2, 150 + 45);
+      
+      let prevY = 150 + 45;
+      for(let [key, func] of Object.entries(this.inputTable)) {
+         this.drawText(`Press ${key} to ${func.toUpperCase()}`, null, prevY += 32);
+      }
    }
    drawPlayField() {
       if(!(this.frame % this.framesPerTick)) {
