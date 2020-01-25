@@ -142,6 +142,8 @@ export default class Interface {
       if(y == null) y = this.canvas.height/2;
       this.ctx.font = `${fontSize} Monospace`;
       this.ctx.textAlign = textAlign;
+      this.ctx.fillStyle = "black";
+      this.ctx.fillText(text, x+1, y+1);
       this.ctx.fillStyle = "white";
       this.ctx.fillText(text, x, y);
    }
