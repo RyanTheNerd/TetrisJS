@@ -163,11 +163,11 @@ export default class Interface {
    drawPausedScreen() {
       this.drawPlayField();
       this.drawText("PAUSED", null, 150, "32px");
-      this.drawText("Press R to restart", this.canvas.width/2, 150 + 45);
+      this.drawText("CONTROLS:", null, 150 + 45, "18px");
       
       let prevY = 150 + 45;
       for(let [key, func] of Object.entries(this.inputTable)) {
-         this.drawText(`Press ${key} to ${func.toUpperCase()}`, null, prevY += 32);
+         this.drawText(`${key}: ${func.toUpperCase()}`, null, prevY += 32);
       }
    }
    drawPlayField() {
