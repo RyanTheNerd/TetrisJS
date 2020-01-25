@@ -9,7 +9,7 @@ export default class Interface {
       document.body.appendChild(this.canvas);
       this.ctx = this.canvas.getContext('2d');
       this.frame = 0;
-      this.framesPerTick = 30;
+      this.framesPerTick = null;
       
       this.canvas.height = window.innerHeight;
       this.cellSize = Math.floor(window.innerHeight / this.h);
@@ -20,12 +20,13 @@ export default class Interface {
          ArrowLeft: "left",
          ArrowRight: "right",
          ArrowDown: "down",
+         Space: "drop",
+         KeyS: "softdrop",
          ArrowUp: "rotateRight",
          KeyD: "rotateLeft",
          KeyF: "rotateRight",
          KeyR: "restart",
          KeyP: "pause",
-         Space: "drop",
       }
       this.inputs = {
          left: false,
@@ -128,9 +129,11 @@ export default class Interface {
          
          }
          else {
-            tetromino.fall();
-            this.game.playField.step();
+            this.game.playField.dropCurrentTetromino();
          }
+      }
+      else if(this.inputs.softdrop) {
+         this.game.playField.dropCurrentTetromino(true);
       }
       tetromino.move(x, y);
    }
@@ -146,7 +149,7 @@ export default class Interface {
       this.clear();
       this.drawText("Press space to start", null, this.canvas.height - 50);
       if(this.frame % 120 > 60) this.drawText("Highscores: ", null, 250, "25px");
-      this.drawText("Tetris", null, 100, "50px" );
+      this.drawText(`Tetris JS v${this.game.version}`, null, 100, "35px" );
       for(let i in this.game.scoreboard.scores) {
          let score = this.game.scoreboard.scores[i];
          this.drawText(`${score[0]}: ${score[1]}`, null, 300 + i * 32);
@@ -169,7 +172,8 @@ export default class Interface {
       this.drawTetrominoGuide(this.game.playField.currentTetromino);
       let startPos = [(this.w - 1)*this.cellSize, 0];
       this.drawText(`Score: ${this.game.score}`, 0, 16, '16px', 'left');
-      this.drawText(`Next tetromino: `, startPos[0], 16, "16px", "end");
+      this.drawText(`Next tetromino: `, startPos[0], 16, '16px', 'end');
+      this.drawText(`Level: ${this.game.level}`, 0, 32 + 8, '16px', 'left');
       this.game.playField.nextTetromino.cells.forEach((cell) => {
          let relativePos = cell.relativePos();
          let cellPos = [startPos[0] + relativePos[0]*this.cellSize/4, startPos[1] + relativePos[1]*this.cellSize/4];

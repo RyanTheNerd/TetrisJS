@@ -25,6 +25,12 @@ export default class PlayField {
          return false;
       }
    }
+   dropCurrentTetromino(soft = false) {
+      this.currentTetromino.fall();
+      if(!soft) {
+         this.step();
+      }
+   }
    step() {
       if(this.game.gameOver || this.game.paused) {
          return; 
