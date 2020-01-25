@@ -1,10 +1,19 @@
 export default class Scoreboard {
-   constructor() {
-    
-      this.scores = JSON.parse(window.localStorage.getItem("scores")) || 
-      ['Ryan', 'John', 'Kyle', 'Dom', 'Emma'].map(
+   constructor(game) {
+      let version = window.localStorage.getItem("version");
+      window.localStorage.setItem("version", game.version);
+      let defaultScores = ['Ryan', 'John', 'Kyle', 'Dom', 'Emma'].map(
          (name, i) => {return [name, (i+1)*10000]}
       );
+      let localScores = JSON.parse(window.localStorage.getItem("scores"));
+
+      if(localScores == null || version != game.version) {
+         this.scores = defaultScores;
+      }
+
+      else {
+         this.scores = localScores;
+      }
       console.log(this.scores);
       this.cleanScores();
    }

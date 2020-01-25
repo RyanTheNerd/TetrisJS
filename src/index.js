@@ -20,7 +20,7 @@ class Game {
          w: 10,
          h: 17,
       });
-      this.scoreboard = new Scoreboard();
+      this.scoreboard = new Scoreboard(this);
       this.interface = new Interface({game: this, w: 10, h: 17});
       this.reset(true);
    }
