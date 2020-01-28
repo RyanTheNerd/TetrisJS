@@ -1,5 +1,16 @@
-export default class RNG {
-    constructor() {
+const XorShift = require("xorshift").constructor;
+
+
+export default class Randomizer {
+    constructor(seed = null) {
+        if(seed == null) {
+            seed = [];
+            for(let i = 0; i < 4; i++) {
+                seed.push(Math.floor(Math.random()*Math.pow(2, 32)));
+            }
+        }
+        this.seed = seed;
+        this.RNG = new XorShift(this.seed);
         this.weight = 0.1;
         this.balance = {};
         for(let tetromino of "IJLOSTZ") {
@@ -9,7 +20,7 @@ export default class RNG {
     randomTetromino() {
         let highest = ['I', 0];
         for(let [tetromino, weight] of Object.entries(this.balance)) { 
-            let likeliness = weight * Math.random();
+            let likeliness = weight * this.RNG.random();
             if(likeliness > highest[1]) {
                 highest = [tetromino, likeliness];
             }

@@ -1,8 +1,9 @@
-import Interface from './interface';
 import Tetromino from './tetromino';
+
 export default class PlayField {
    
    constructor(config) {
+      this.onlyTetromino = config.onlyTetromino || "random";
       this.game = config.game;
       this.w = config.w;
       this.h = config.h;
@@ -59,7 +60,7 @@ export default class PlayField {
                clearedLines++;
                this.game.lines++;
                this.game.changeLevel();
-               this.game.changeFPT();
+               this.game.interface.changeFPT();
             }
             if(clearedLines == 4) {
                this.tetrisCount++;
@@ -73,14 +74,14 @@ export default class PlayField {
 
          this.currentTetromino = this.nextTetromino;
          this.currentTetromino.enable(); 
-         this.nextTetromino = new Tetromino(this, [3, 0], 'random');
+         this.nextTetromino = new Tetromino(this, [3, 0], this.onlyTetromino);
       }
    }
    reset() {
       this.cells = [];
       this.rows = [...Array(this.h)].map(e => Array());
-      this.currentTetromino = new Tetromino(this, [3, 0], 'random');
+      this.currentTetromino = new Tetromino(this, [3, 0], this.onlyTetromino);
       this.currentTetromino.enable();
-      this.nextTetromino = new Tetromino(this, [3, 0], 'random');
+      this.nextTetromino = new Tetromino(this, [3, 0], this.onlyTetromino);
    }
 }

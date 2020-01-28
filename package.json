@@ -24,7 +24,8 @@
   "homepage": "https://github.com/RyanTheNerd/TetrisJS#readme",
   "dependencies": {
     "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "xorshift": "^1.1.1"
   },
   "devDependencies": {
     "babel-loader": "^8.0.6"

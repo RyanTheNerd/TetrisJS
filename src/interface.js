@@ -1,14 +1,18 @@
 export default class Interface {
    constructor(config) {
+      this.record = config.record;
+      this.recording = {};
       this.w = config.w;
       this.h = config.h;
       this.game = config.game;
+      this.rotation = 0;
       
       // Canvas stuff
       this.canvas = document.createElement('canvas');
       document.body.appendChild(this.canvas);
       this.ctx = this.canvas.getContext('2d');
-      this.frame = 0;
+      this.frames = 0;
+      this.inGameFrames = 0;
       this.framesPerTick = null;
       
       this.canvas.height = window.innerHeight;
@@ -37,7 +41,15 @@ export default class Interface {
          rotate: false,
          pause: false,
          restart: false,
-      }
+      };
+      this.recordingTable = {
+         left: 0,
+         right: 1,
+         down: 2,
+         drop: 3,
+         rotate: 4,
+      };
+
       
       // Handles keyboard events
       window.addEventListener('keydown', function(event) {
@@ -87,7 +99,18 @@ export default class Interface {
       }.bind(this));
       this.refresh();
    }
+   changeFPT(level = this.game.level) {
+      let fpt = 48 - Math.floor(Math.log10(level + 1) * 32);
+      if(fpt < 1) fpt = 1;
+      if(fpt == this.framesPerTick) {
+         return false;
+      }
+      return this.framesPerTick = fpt;
+   }
    handleInput() {
+      if(this.game.gameOver == false && this.game.paused == false) {
+         this.recordInput();
+      }
       let tetromino = this.game.playField.currentTetromino;
       let x = 0;
       let y = 0;
@@ -139,6 +162,19 @@ export default class Interface {
       }
       tetromino.move(x, y);
    }
+   recordInput() {
+      if(this.record) {
+         let downKeys = "";
+         for(let [key, down] of Object.entries(this.inputs)) {
+            if(down) {
+               downKeys += this.recordingTable[key] || "";
+            }
+         }
+         if(Object.keys(downKeys).length > 0) {
+            this.recording[this.inGameFrames] = downKeys;
+         }
+      }
+   }
    drawText(text, x=null, y=null, fontSize="16px", textAlign="center") {
       if(x == null) x = this.canvas.width/2;
       if(y == null) y = this.canvas.height/2;
@@ -152,7 +188,7 @@ export default class Interface {
    drawEndScreen() {
       this.clear();
       this.drawText("Press space to start", null, this.canvas.height - 50);
-      if(this.frame % 120 > 60) this.drawText("Highscores: ", null, 250, "25px");
+      if(this.frames % 120 > 60) this.drawText("Highscores: ", null, 250, "25px");
       this.drawText(`Tetris JS v${this.game.version}`, null, 100, "35px" );
       for(let i in this.game.scoreboard.scores) {
          let score = this.game.scoreboard.scores[i];
@@ -171,7 +207,8 @@ export default class Interface {
       }
    }
    drawPlayField() {
-      if(!(this.frame % this.framesPerTick)) {
+      this.inGameFrames++;
+      if(!(this.frames % this.framesPerTick)) {
          this.game.playField.step();
       }
       this.game.playField.cells.forEach((cell) => {
@@ -185,7 +222,10 @@ export default class Interface {
       this.drawText(`Level: ${this.game.level}`, 0, 32 + 8, '16px', 'left');
       this.game.playField.nextTetromino.cells.forEach((cell) => {
          let relativePos = cell.relativePos();
-         let cellPos = [startPos[0] + relativePos[0]*this.cellSize/4, startPos[1] + relativePos[1]*this.cellSize/4];
+         relativePos[0] *= this.cellSize/4;
+         relativePos[1] *= this.cellSize/4;
+         
+         let cellPos = [startPos[0] + relativePos[0], startPos[1] + relativePos[1]];
          this.drawCell(cell, cellPos, 1/4);
       });
 
@@ -197,7 +237,7 @@ export default class Interface {
       this.ctx.closePath();
    }
    refresh() {
-      this.frame++;
+      this.frames++;
       this.handleInput();
       this.clear();
       if(this.game.gameOver) {

@@ -1,4 +1,5 @@
 .vscode/
 dist/main.js
 yarn.lock
+package-lock.json
 node_modules/
