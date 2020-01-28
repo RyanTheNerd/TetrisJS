@@ -17,10 +17,10 @@ class Game {
       this.playField = new PlayField({
          game: this,
          w: 10,
-         h: 17,
+         h: 20,
       });
       this.scoreboard = new Scoreboard(this);
-      this.interface = new Interface({game: this, w: 10, h: 17});
+      this.interface = new Interface({game: this, w: 10, h: 20});
       this.reset(true);
    }
    reset(showEndScreen) {
