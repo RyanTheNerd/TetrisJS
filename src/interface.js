@@ -1,3 +1,4 @@
+import InputManager from "./inputManager";
 export default class Interface {
    constructor(config) {
       this.record = config.record;
@@ -6,6 +7,7 @@ export default class Interface {
       this.h = config.h;
       this.game = config.game;
       this.rotation = 0;
+      this.inputManager = new InputManager(this);
       
       // Canvas stuff
       this.canvas = document.createElement('canvas');
@@ -18,87 +20,9 @@ export default class Interface {
       this.canvas.height = window.innerHeight;
       this.cellSize = Math.floor(window.innerHeight / this.h);
       this.canvas.width = this.cellSize * this.w;
-      
-      // Input stuff
-      this.inputTable = {
-         ArrowLeft: "left",
-         ArrowRight: "right",
-         ArrowDown: "down",
-         Space: "drop",
-         KeyS: "softdrop",
-         ArrowUp: "rotateRight",
-         KeyF: "rotateRight",
-         KeyD: "rotateLeft",
-         KeyR: "restart",
-         KeyP: "pause",
-         Enter: "pause"
-      }
-      this.inputs = {
-         left: false,
-         right: false,
-         down: false,
-         drop: false,
-         rotate: false,
-         pause: false,
-         restart: false,
-      };
-      this.recordingTable = {
-         left: 0,
-         right: 1,
-         down: 2,
-         drop: 3,
-         rotate: 4,
-      };
-
-      
-      // Handles keyboard events
-      window.addEventListener('keydown', function(event) {
-         for(let [key, value] of Object.entries(this.inputTable)) {
-            if(event.code == key) {
-               this.inputs[value] = true;
-            }
-         }
-      }.bind(this));
-      window.addEventListener('keyup', function(event) {
-         for(let [key, value] of Object.entries(this.inputTable)) {
-            if(event.code == key) {
-               this.inputs[value] = false;
-            }
-         }
-      }.bind(this));
-      // Handles touch screen events
-      this.canvas.addEventListener('touchstart', function(event) {
-         event.preventDefault();
-      }.bind(this));
-      this.canvas.addEventListener('touchcancel', function(event) {
-         event.preventDefault();
-      }.bind(this));
-      
-      window.addEventListener('touchend', function(event) {
-         event.preventDefault();
-         let x = event.changedTouches[0].pageX;
-         let y = event.changedTouches[0].pageY;
-         let w = this.canvas.width;
-         let h = this.canvas.height;
-         
-         let boxes = {
-            rotateRight: [w/3, 0, w * 2/3, h*3/4],
-            drop: [0, h * 3/4, w, h],
-            left: [0, 0, w/3, h * 3/4],
-            right: [w * 2/3, 0, w, h * 2/3],
-         }
-         for(let [boxName, box] of Object.entries(boxes)) {
-            if(x > box[0] && x < box[2] && y > box[1] && y < box[3]) {
-               this.inputs[boxName] = true;
-            }
-         }
-         
-      }.bind(this));
-      this.canvas.addEventListener('touchmove', function(event) {
-         event.preventDefault();
-      }.bind(this));
       this.refresh();
    }
+      
    changeFPT(level = this.game.level) {
       let fpt = 48 - Math.floor(Math.log10(level + 1) * 32);
       if(fpt < 1) fpt = 1;
@@ -108,43 +32,44 @@ export default class Interface {
       return this.framesPerTick = fpt;
    }
    handleInput() {
+      let ipmg = this.inputManager;
       if(this.game.gameOver == false && this.game.paused == false) {
          this.recordInput();
       }
       let tetromino = this.game.playField.currentTetromino;
       let x = 0;
       let y = 0;
-      if(this.inputs.pause) {
+      if(ipmg.readAction("pause")) {
+         console.log("pause key");
          this.game.paused = !this.game.paused;
-         this.inputs.pause = false;
          return;
       }
-      else if(this.inputs.restart) {
+      else if(ipmg.readAction("restart")) {
          this.game.reset();
-         this.inputs.restart = false;
       }
-      else if(this.inputs.left) {
-         this.inputs.left = false;
-         x = -1;
+      else if(!(this.game.paused)) {
+         if(ipmg.readAction("left")) {
+            x = -1;
+         }
+         else if(ipmg.readAction("right")) {
+            x = 1;
+         }
+         else if(ipmg.readAction("down")) {
+            y = 1;
+         }
+         else if(ipmg.readAction("rotateLeft")) {
+            tetromino.rotate('left');
+         }
+         else if(ipmg.readAction("rotateRight")) {
+            tetromino.rotate('right');
+         }
+         else if(ipmg.readAction("softDrop")) {
+            this.game.playField.dropCurrentTetromino(true);
+            this.inGameFrames += this.framesPerTick - (this.inGameFrames % this.framesPerTick);
+         }
+
       }
-      else if(this.inputs.right) {
-         this.inputs.right = false;
-         x = 1;
-      }
-      else if(this.inputs.down) {
-         this.inputs.down = false;
-         y = 1;
-      }
-      else if(this.inputs.rotateLeft) {
-         this.inputs.rotateLeft = false;
-         tetromino.rotate('left');
-      }
-      else if(this.inputs.rotateRight) {
-         this.inputs.rotateRight = false;
-         tetromino.rotate('right');
-      }
-      else if(this.inputs.drop) {
-         this.inputs.drop = false;
+      if(ipmg.readAction('drop')) {
          if(this.game.gameOver) {
             this.game.reset();
             this.game.gameOver = false;
@@ -156,9 +81,6 @@ export default class Interface {
          else {
             this.game.playField.dropCurrentTetromino();
          }
-      }
-      else if(this.inputs.softdrop) {
-         this.game.playField.dropCurrentTetromino(true);
       }
       tetromino.move(x, y);
    }
@@ -198,17 +120,18 @@ export default class Interface {
    }
    drawPausedScreen() {
       this.drawPlayField();
+      this.clear(0.50);
       this.drawText("PAUSED", null, 150, "32px");
       this.drawText("CONTROLS:", null, 150 + 45, "18px");
       
       let prevY = 150 + 45;
-      for(let [key, func] of Object.entries(this.inputTable)) {
-         this.drawText(`${key}: ${func.toUpperCase()}`, null, prevY += 32);
+      for(let control of this.inputManager.listControls()) {
+         this.drawText(control, null, prevY += 32);
       }
    }
    drawPlayField() {
       this.inGameFrames++;
-      if(!(this.frames % this.framesPerTick)) {
+      if(!(this.inGameFrames % this.framesPerTick)) {
          this.game.playField.step();
       }
       this.game.playField.cells.forEach((cell) => {
@@ -230,9 +153,9 @@ export default class Interface {
       });
 
    }
-   clear() {
+   clear(alpha=1) {
       this.ctx.beginPath();
-      this.ctx.fillStyle = "rgb(20, 20, 20)";
+      this.ctx.fillStyle = `rgba(20, 20, 20, ${alpha})`;
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.closePath();
    }
