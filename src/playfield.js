@@ -1,5 +1,16 @@
 import Tetromino from './tetromino';
 
+/* PlayField: Keeps track of all cells and current/next tetromino
+   getCell(x, y): returns false if (x, y) is not on playfield, 
+      null if location available, otherwise returns cell at (x, y)
+
+   dropCurrentTetromino(soft): drops currentTetromino, then steps if soft == false
+
+   reset: Resets all attributes to their default values
+
+
+*/
+
 export default class PlayField {
    
    constructor(config) {

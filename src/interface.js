@@ -1,4 +1,14 @@
 import InputManager from "./inputManager";
+
+/* Interface: In charge of all drawing and executing game actions
+   changeFPT(level): changes the frames per tick of the game based on level
+   handleInput: Executes pending actions from inputManager
+   drawText(text, x, y, fontSize, textAlign): Draws text on the interface
+   refresh: Runs the corresponding screen based on the game state
+   drawPlayField: Draws the playfield and makes the game tick
+
+*/
+
 export default class Interface {
    constructor(config) {
       this.record = config.record;
@@ -83,19 +93,6 @@ export default class Interface {
          }
       }
       tetromino.move(x, y);
-   }
-   recordInput() {
-      if(this.record) {
-         let downKeys = "";
-         for(let [key, down] of Object.entries(this.inputs)) {
-            if(down) {
-               downKeys += this.recordingTable[key] || "";
-            }
-         }
-         if(Object.keys(downKeys).length > 0) {
-            this.recording[this.inGameFrames] = downKeys;
-         }
-      }
    }
    drawText(text, x=null, y=null, fontSize="16px", textAlign="center") {
       if(x == null) x = this.canvas.width/2;

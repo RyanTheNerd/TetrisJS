@@ -5,6 +5,12 @@ import RNG from './rng';
 
 const VERSION = "1.2";
 
+/* Game: The root object controling all parts of the game
+   reset(showEndScreen): Resets the game and starts it if showEndScreen == false
+   randomTetromino: Returns a random tetromino from RNG
+   changeLevel: Changes the level based on the number of lines cleared
+*/
+
 class Game {
    constructor(config) {
       this.RNG = new RNG(config.seed);

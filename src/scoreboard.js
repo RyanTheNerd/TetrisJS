@@ -1,3 +1,7 @@
+/*
+   addScore(name, score): Add a score with a corresponding name to localStorage
+   cleanScores: Sorts scores and keeps top 5
+*/
 export default class Scoreboard {
    constructor(game) {
       let version = window.localStorage.getItem("version");
