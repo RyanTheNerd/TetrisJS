@@ -13,6 +13,7 @@ export default class Scoreboard {
 
       if(localScores == null || version != game.version) {
          this.scores = defaultScores;
+         this.writeScores();
       }
 
       else {
@@ -23,6 +24,9 @@ export default class Scoreboard {
    addScore(name, score) {
       this.scores.push([name, score]);
       this.cleanScores();
+      this.writeScores();
+   }
+   writeScores() {
       window.localStorage.setItem("scores", JSON.stringify(this.scores));
    }
    cleanScores() {

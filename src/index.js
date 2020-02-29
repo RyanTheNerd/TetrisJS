@@ -3,7 +3,7 @@ import Interface from './interface';
 import Scoreboard from './scoreboard';
 import RNG from './rng';
 
-const VERSION = "1.2";
+const VERSION = "1.4";
 
 /* Game: The root object controling all parts of the game
    reset(showEndScreen): Resets the game and starts it if showEndScreen == false
