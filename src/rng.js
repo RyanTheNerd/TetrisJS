@@ -11,26 +11,25 @@ export default class Randomizer {
         }
         this.seed = seed;
         this.RNG = new XorShift(this.seed);
-        this.weight = 0.1;
-        this.balance = {};
-        for(let tetromino of "IJLOSTZ") {
-            this.balance[tetromino] = 1;
+        this.tetrominos = "IJLOSTZ";
+        this.bag = [];
+    }
+    refillBag() {
+        this.bag = this.tetrominos.split('');
+        for(let i = this.bag.length-1; i > 0; i--) {
+            let j = Math.floor(Math.random()*i);
+            let placeholder = this.bag[i];
+            this.bag[i] = this.bag[j]; this.bag[j] = placeholder;
         }
+
     }
     randomTetromino() {
-        let highest = ['I', 0];
-        for(let [tetromino, weight] of Object.entries(this.balance)) { 
-            let likeliness = weight * this.RNG.random();
-            if(likeliness > highest[1]) {
-                highest = [tetromino, likeliness];
-            }
+        if(this.bag.length === 0) {
+            this.refillBag();
         }
-        this.balance[highest[0]] -= this.weight;
-        for(let key in this.balance) {
-            if(highest[0] != key) {
-                this.balance[key] += this.weight / 7;
-            }
-        }
-        return highest[0];
+        let piece = this.bag.pop();
+        console.log(piece);
+        return piece;
+
     }
 }
