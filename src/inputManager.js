@@ -34,6 +34,10 @@ const ACTION_DESCS = {
    restart: "Restart Game",
    pause: "Pause Game",
 }
+const ACTION_NUMBERING = Object.keys(ACTION_DESCS).reduce((table, action, index) => {
+      table[index] = action;
+      return table;
+   }, new Object());
 
 /* Input Manager: Converts input into corresponding game actions
    listControls: Returns a list of keys and their binded actions
@@ -45,7 +49,8 @@ const ACTION_DESCS = {
 export default class InputManager {
    constructor(_interface) {
       this.interface = _interface;
-      this.recording = {};
+      this.game = this.interface.game;
+      this.recording = new Recording(this.game.seed);
       // Input stuff
 
       this.keyBindings = KEY_BINDINGS;
@@ -60,11 +65,6 @@ export default class InputManager {
          this.actions[action] = false;
       }
 
-      this.recordingTable = {};
-      Object.keys(ACTION_DESCS).forEach((action, index) => {
-         this.recordingTable[action] = index;
-      });
-      console.log(this.recordingTable);
 
       // Handles keyboard events
       window.addEventListener('keydown', function(event) {
@@ -165,28 +165,29 @@ export default class InputManager {
    recordAction(action, state) {
       let frame = this.interface.frames;
       if(state == true) {
-         if(this.recording[frame] == null) {
-            this.recording[frame] = "";
-         }
-         this.recording[frame] += this.recordingTable[action];
-         console.log(JSON.stringify(this.recording));
+         this.recording.recordAction(action, frame);
       }
       return state;
    }
 }
 
-/* InputPlayback: Used to playback action data recorded in a previous session
-   readAction(action): returns true if action is recorded at this.interface.frames
-*/
-export class InputPlayback extends InputManager {
-   constructor(_interface, playbackData) {
-      super(_interface);
-      this.playbackData = playbackData;
-   }
-   readAction(action) {
-      let actionStates = this.playbackData[this.interface.frames].map((val, index) => {
-         
-      });
-   }
 
+class Recording {
+   constructor(seed, data = null) {
+      this.seed = seed;
+      this.data = data || {};
+      this.actionList = Object.keys(ACTION_DESCS);
+   }
+   readAction(frame) {
+      return this.actionList(this.data[frame]);
+   }
+   recordAction(action, frame) {
+      this.data[frame] = this.actionList.indexOf(action);
+   }
+   exportData() {
+      return this.data;
+   }
+   importData(data) {
+      this.data = data;
+   }
 }

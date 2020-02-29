@@ -43,9 +43,6 @@ export default class Interface {
    }
    handleInput() {
       let ipmg = this.inputManager;
-      if(this.game.gameOver == false && this.game.paused == false) {
-         this.recordInput();
-      }
       let tetromino = this.game.playField.currentTetromino;
       let x = 0;
       let y = 0;
@@ -81,6 +78,7 @@ export default class Interface {
       }
       if(ipmg.readAction('drop')) {
          if(this.game.gameOver) {
+            this.inputManager.recording.exportData();
             this.game.reset();
             this.game.gameOver = false;
          }

@@ -30,7 +30,12 @@ class Game {
          h: 20,
       });
       this.scoreboard = new Scoreboard(this);
-      this.interface = new Interface({game: this, w: 10, h: 20});
+      this.interface = new Interface({
+         game: this,
+         w: 10, h: 20, 
+         seed: config.seed,
+         playbackData: config.playbackData,
+      });
       this.reset(true);
    }
    reset(showEndScreen) {
@@ -64,4 +69,6 @@ let game = new Game({
    startLevel: parseInt(params.get("startLevel")) || 0,
    onlyTetromino: params.get("onlyTetromino"),
    record: params.get("record") == "true",
+   seed: params.get("seed"),
+   playbackData: params.get("demo"),
 });
