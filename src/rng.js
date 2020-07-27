@@ -28,7 +28,6 @@ export default class Randomizer {
             this.refillBag();
         }
         let piece = this.bag.pop();
-        console.log(piece);
         return piece;
 
     }

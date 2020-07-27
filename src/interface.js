@@ -12,7 +12,6 @@ import InputManager from "./inputManager";
 export default class Interface {
    constructor(config) {
       this.record = config.record;
-      this.recording = {};
       this.w = config.w;
       this.h = config.h;
       this.game = config.game;
@@ -42,43 +41,41 @@ export default class Interface {
       return this.framesPerTick = fpt;
    }
    handleInput() {
-      let ipmg = this.inputManager;
+      let pendingActions = this.inputManager.getPendingActions();
       let tetromino = this.game.playField.currentTetromino;
       let x = 0;
       let y = 0;
-      if(ipmg.readAction("pause")) {
-         console.log("pause key");
+      if(pendingActions["pause"]) {
          this.game.paused = !this.game.paused;
          return;
       }
-      else if(ipmg.readAction("restart")) {
+      else if(pendingActions["reset"]) {
          this.game.reset();
       }
       else if(!(this.game.paused)) {
-         if(ipmg.readAction("left")) {
+         if(pendingActions["left"]) {
             x = -1;
          }
-         else if(ipmg.readAction("right")) {
+         else if(pendingActions["right"]) {
             x = 1;
          }
-         else if(ipmg.readAction("down")) {
+         else if(pendingActions["down"]) {
             y = 1;
          }
-         else if(ipmg.readAction("rotateLeft")) {
+         else if(pendingActions["rotateLeft"]) {
             tetromino.rotate('left');
          }
-         else if(ipmg.readAction("rotateRight")) {
+         else if(pendingActions["rotateRight"]) {
             tetromino.rotate('right');
          }
-         else if(ipmg.readAction("softDrop")) {
+         else if(pendingActions["softDrop"]) {
             this.game.playField.dropCurrentTetromino(true);
             this.inGameFrames += this.framesPerTick - (this.inGameFrames % this.framesPerTick);
          }
 
       }
-      if(ipmg.readAction('drop')) {
+      if(pendingActions['drop']) {
          if(this.game.gameOver) {
-            this.inputManager.recording.exportData();
             this.game.reset();
             this.game.gameOver = false;
          }
@@ -120,7 +117,8 @@ export default class Interface {
       this.drawText("CONTROLS:", null, 150 + 45, "18px");
       
       let prevY = 150 + 45;
-      for(let control of this.inputManager.listControls()) {
+      let controls = this.inputManager.listControls();
+      for(let control of controls) {
          this.drawText(control, null, prevY += 32);
       }
    }

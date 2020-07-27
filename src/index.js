@@ -14,9 +14,11 @@ const VERSION = "1.4";
 class Game {
    constructor(config) {
       this.RNG = new RNG(config.seed);
-      this.version = VERSION;
+      this.version = VERSION; // A major version change erases scores
       this.startLevel = config.startLevel || 0;
+
       let lineClear = (this.startLevel * 10) + 10;
+
       let lineMax = (this.startLevel * 10) - 50;
       if(lineMax < 0) {
          this.startingLines = lineClear;
@@ -24,12 +26,15 @@ class Game {
       else {
          this.startingLines = lineClear > lineMax ? lineMax : lineClear;
       }
+
       this.playField = new PlayField({
          game: this,
          w: 10,
          h: 20,
       });
+
       this.scoreboard = new Scoreboard(this);
+
       this.interface = new Interface({
          game: this,
          w: 10, h: 20, 
