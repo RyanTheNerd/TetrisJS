@@ -11,7 +11,6 @@ import InputManager from "./inputManager";
 
 export default class Interface {
    constructor(config) {
-      this.record = config.record;
       this.w = config.w;
       this.h = config.h;
       this.game = config.game;
