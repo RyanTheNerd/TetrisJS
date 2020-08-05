@@ -4,7 +4,10 @@ import InputManager from './inputManager';
 import Scoreboard from './scoreboard';
 import TetrominoBag from './bag';
 
-const VERSION = "1.4";
+const VERSION = require("../package.json").version;
+
+console.log(VERSION);
+
 
 export default class Game {
    constructor(config) {

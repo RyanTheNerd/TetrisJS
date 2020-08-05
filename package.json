@@ -1,6 +1,6 @@
 {
   "name": "tetrisjs",
-  "version": "1.0.0",
+  "version": "2.0",
   "description": "A tetris clone written in vanilla JS",
   "main": "main.js",
   "scripts": {
