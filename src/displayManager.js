@@ -21,9 +21,11 @@ export default class DisplayManager {
 
       this.frames = 0;
       
-      this.canvas.height = window.innerHeight;
-      this.cellSize = Math.floor(window.innerHeight / this.h);
-      this.canvas.width = this.cellSize * this.w;
+      //  Manage scale
+      this.cellSize = Math.min(Math.floor(window.innerWidth / this.w), Math.floor(window.innerHeight / this.h));
+      this.canvas.width = this.w * this.cellSize;
+      this.canvas.height = this.h * this.cellSize;
+
    }
    // Change the number of frames per tick of the game
    // Apply the list of currently pending actions

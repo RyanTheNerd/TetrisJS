@@ -48,11 +48,13 @@ export default class Game {
          this.startingLines = lineClear > lineMax ? lineMax : lineClear;
       }
 
+      this.width = config.width;
+      this.height = config.height;
       this.scoreboard = new Scoreboard(this);
       this.inputManager = new InputManager(this);
       this.displayManager = new DisplayManager({
          game: this,
-         w: 10, h: 20, 
+         w: this.width, h: this.height, 
          seed: config.seed,
          playbackData: config.playbackData,
       });
@@ -60,8 +62,8 @@ export default class Game {
 
       this.playField = new PlayField({
          game: this,
-         w: 10,
-         h: 20,
+         w: this.width,
+         h: this.height,
       });
 
       this.bag = new TetrominoBag(this.playField, config.seed);

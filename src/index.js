@@ -18,6 +18,7 @@ const config = Object.entries(PARAMS).reduce((config, [param, props]) => {
    if(props.type == "int") config[props.fullName] = parseInt(params.get(param)) || props.default;
    else if(props.type == "bool") config[props.fullName] = params.has(param) || props.default;
    else if(props.type == "str") config[props.fullName] = params.get(param) || props.default;
+   console.log(config);
    return config;
 }, {});
 
