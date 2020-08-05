@@ -157,9 +157,9 @@ export default class Game {
       if(!this.currentTetromino.move(0, 1)) {
          this.currentTetromino.solidify();
          if(this.currentTetromino.y == 0) {
-            this.gameOver = true;
             this.scoreboard.addScore('You', this.score);
             this.scoreboard.compileScores();
+            this.reset();
          }
          
          this.getNextTetromino();
