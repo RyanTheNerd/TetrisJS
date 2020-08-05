@@ -1,20 +1,27 @@
 # TetrisJS
-A simple tetris clone using vanilla JS.
+A tetris clone designed to have the look and feel of an arcade machine, but with modern features.
 
-# Running
-Run `npm run buld` then open `dist/index.html` in a web browser
+# Installation and running
+
+### Install
+* [Install node.js](https://nodejs.org/en/)
+* Run `npm install`
+
+### Run
+* Run `npm run test`
 
 # Controls
 
-## Keyboard
-* Left and right arrows for horizontal movement
-* Up arrow and f for clockwise rotation
-* d for counterclockwise rotation
-* Down arrow to move 1 cell down
-* Spacebar to drop
-* Enter for pause menu
+## Move
+* `Left Arrow`: Move Left (Turboable)
+* `Right Arrow`: Move Right (Turboable)
+* `Down Arrow`: Turbo while pressed
+* `Space`: Drop Tetromino
 
-## Touch
-* Tap left right side of screen for horizontal movement
-* Tap the center for rotation
-* Tap the bottom to drop
+## Rotate
+* `D`: Rotate Left
+* `Up Arrow` / `F`: Rotate Right
+
+## Game management
+* `R`: Restart Game
+* `Enter` / `P`: Pause Game
