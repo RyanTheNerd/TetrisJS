@@ -10,7 +10,7 @@ export default class Game {
    constructor(config) {
       this.actions = {
          inGame: {
-            reset: () => this.reset,
+            restart: () => this.reset(),
             pause: () => {this.state = "paused"},
             left: () => {this.dx -= 1},
             right: () => {this.dx += 1},
@@ -65,6 +65,7 @@ export default class Game {
 
       this.bag = new TetrominoBag(this.playField, config.seed);
       this.reset();
+      window.requestAnimationFrame(() => {this.refresh()});
    }
    reset() {
       // Frames
@@ -78,8 +79,6 @@ export default class Game {
       this.score = 0;
       this.level = this.startLevel;
       this.lines = 0;
-
-      window.requestAnimationFrame(() => {this.refresh()});
    }
    startGame() {
       this.state = "inGame";
