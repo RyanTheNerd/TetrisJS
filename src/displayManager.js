@@ -28,8 +28,10 @@ export default class DisplayManager {
    // Change the number of frames per tick of the game
    // Apply the list of currently pending actions
    drawText(text, x=null, y=null, fontSize="16px", textAlign="center") {
+      // Draw in the center by default
       if(x == null) x = this.canvas.width/2;
       if(y == null) y = this.canvas.height/2;
+
       this.ctx.font = `${fontSize} Monospace`;
       this.ctx.textAlign = textAlign;
       this.ctx.fillStyle = "black";
@@ -41,32 +43,29 @@ export default class DisplayManager {
       this.clear();
       this.drawText("Press space to start", null, this.canvas.height - 50);
       if(displayText) this.drawText("Highscores: ", null, 250, "25px");
-      this.drawText(`Tetris JS v${this.game.version}`, null, 100, "35px" );
-      for(let i in this.game.scoreboard.scores) {
-         let score = this.game.scoreboard.scores[i];
+      this.drawText(`Tetris JS v${this.game.version}`, null, 100, "35px");
+
+      this.game.scoreboard.scores.forEach((score, i) => {
          this.drawText(`${score[0]}: ${score[1]}`, null, 300 + i * 32);
-      }
-         
+      });
    }
    drawPausedScreen() {
       this.drawPlayField();
-      this.clear(0.50);
+      this.clear(0.5);
       this.drawText("PAUSED", null, 150, "32px");
       this.drawText("CONTROLS:", null, 150 + 45, "18px");
       
       let prevY = 150 + 45;
-      for(let control of this.controls) {
-         this.drawText(control, null, prevY += 32);
-      }
+      this.controls.forEach((control) => this.drawText(control, null, prevY += 32, '16px', "left"));
    }
    drawPlayField() {
       this.drawTetrominoGuide(this.game.currentTetromino);
-      let startPos = [(this.w - 1)*this.cellSize, 0];
+      let startPos = [(this.w - 1.25)*this.cellSize, 0];
       this.drawText(`Score: ${this.game.score}`, 0, 16, '16px', 'left');
       this.drawText(`Next tetromino: `, startPos[0], 16, '16px', 'end');
       this.drawText(`Level: ${this.game.level}`, 0, 32 + 8, '16px', 'left');
       this.drawCells();
-      this.drawTetrominoSmall(this.game.nextTetromino, this.canvas.width - this.cellSize, 0);
+      this.drawTetrominoSmall(this.game.nextTetromino, startPos[0], 0);
    }
    clear(alpha=1) {
       this.ctx.beginPath();
@@ -93,8 +92,6 @@ export default class DisplayManager {
       this.ctx.lineWidth = cellSize/this.cellSize * 4;
       this.ctx.fillRect(x, y, cellSize, cellSize);
       this.ctx.strokeRect(x, y, cellSize, cellSize);
-
-
    }
    drawCell(cell) {
       let pos = [cell.x*this.cellSize, cell.y*this.cellSize];
@@ -119,11 +116,6 @@ export default class DisplayManager {
       this.game.playField.cells.forEach((cell) => {
          this.drawCell(cell);
       });
-   }
-   drawTetromino(tetromino, guide = true) {
-      for(let cell of tetromino.cells) {
-         this.drawCell(cell);
-      }
    }
    drawTetrominoSmall(tetromino, x, y) {
       let cellSize = this.cellSize * 0.25;
