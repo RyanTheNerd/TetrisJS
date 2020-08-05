@@ -12,6 +12,7 @@ export default class DisplayManager {
       this.h = config.h;
       this.game = config.game;
       this.rotation = 0;
+      this.controls = this.game.inputManager.listControls();
       
       // Canvas stuff
       this.canvas = document.createElement('canvas');
@@ -54,8 +55,7 @@ export default class DisplayManager {
       this.drawText("CONTROLS:", null, 150 + 45, "18px");
       
       let prevY = 150 + 45;
-      let controls = this.inputManager.listControls();
-      for(let control of controls) {
+      for(let control of this.controls) {
          this.drawText(control, null, prevY += 32);
       }
    }
