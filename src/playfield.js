@@ -1,5 +1,3 @@
-import Tetromino from './tetromino';
-
 /* PlayField: Keeps track of all cells and current/next tetromino
    getCell(x, y): returns false if (x, y) is not on playfield, 
       null if location available, otherwise returns cell at (x, y)
@@ -7,14 +5,15 @@ import Tetromino from './tetromino';
    dropCurrentTetromino(soft): drops currentTetromino, then steps if soft == false
 
    reset: Resets all attributes to their default values
+*/
 
-
+/*
+solidify means to move from the tetromino to the row
 */
 
 export default class PlayField {
    
    constructor(config) {
-      this.onlyTetromino = config.onlyTetromino || "random";
       this.game = config.game;
       this.w = config.w;
       this.h = config.h;
@@ -37,62 +36,42 @@ export default class PlayField {
          return false;
       }
    }
-   dropCurrentTetromino(soft = false) {
-      this.currentTetromino.fall();
-      if(!soft) {
-         this.step();
-      }
+   addCell(cell) {
+      this.cells.push(cell);
    }
-   step() {
-      if(this.game.gameOver || this.game.paused) {
-         return; 
-      }
-      if(!this.currentTetromino.move(0, 1)) {
-         if(this.currentTetromino.y == 0) {
-            this.game.gameOver = true;
-            this.game.scoreboard.addScore('You', this.game.score);
-            this.game.scoreboard.cleanScores();
-         }
-         
-         for(let cell of this.currentTetromino.cells) {
-            this.rows[cell.y].push(cell);
-         }
-         
-         let clearedLines = 0;
-         for(let row in this.rows) {
-            if(this.rows[row].length == this.w) {
-               for (let cell of this.rows[row]) {
-                  this.cells.splice(this.cells.indexOf(cell), 1);
-               }
-               this.cells.forEach((cell) => {if(cell.y < row) cell.y += 1});
-               // Delete the row and the cells in it
-               this.rows.splice(row, 1);
-               this.rows.unshift(new Array());
-               clearedLines++;
-               this.game.lines++;
-               this.game.changeLevel();
-               this.game.interface.changeFPT();
-            }
-            if(clearedLines == 4) {
-               this.tetrisCount++;
-               this.game.score += this.tetrisCount > 1 ? 1200 : 800;
-            }
-            else {
-               this.tetrisCount = 0;
-               this.game.score += clearedLines * 100;
-            }
-         }
+   solidifyCell(cell) {
+      this.rows[cell.y].push(cell);
+   }
+   addTetromino(tetromino) {
+     for(let cell of tetromino.cells) {
+        this.cells.push(cell);
+     } 
+   }
+   getclearedRows() {
+      let clearedRows = 0;
+      for(let row in this.rows) {
+         if(this.rows[row].length == this.w) {
 
-         this.currentTetromino = this.nextTetromino;
-         this.currentTetromino.enable(); 
-         this.nextTetromino = new Tetromino(this, [3, 0], this.onlyTetromino);
+            // remove the cell from this.cells
+            for(let cell of this.rows[row]) {
+               this.cells.splice(this.cells.indexOf(cell), 1);
+            }
+
+            // Delete the row and the cells in it
+            this.rows.splice(row, 1);
+            this.rows.unshift(new Array());
+
+            // Shift the cells above the deleted row down
+            this.cells.forEach((cell) => {if(cell.y < row) cell.y += 1});
+
+            // Add it to the cleared row count
+            clearedRows++;
+         }
       }
+      return clearedRows;
    }
    reset() {
       this.cells = [];
-      this.rows = [...Array(this.h)].map(e => Array());
-      this.currentTetromino = new Tetromino(this, [3, 0], this.onlyTetromino);
-      this.currentTetromino.enable();
-      this.nextTetromino = new Tetromino(this, [3, 0], this.onlyTetromino);
+      this.rows = [...Array(this.h)].map(() => Array());
    }
 }

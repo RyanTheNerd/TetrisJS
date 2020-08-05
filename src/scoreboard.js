@@ -1,6 +1,6 @@
 /*
    addScore(name, score): Add a score with a corresponding name to localStorage
-   cleanScores: Sorts scores and keeps top 5
+   compileScores: Sorts scores and keeps top 5
 */
 export default class Scoreboard {
    constructor(game) {
@@ -19,17 +19,17 @@ export default class Scoreboard {
       else {
          this.scores = localScores;
       }
-      this.cleanScores();
+      this.compileScores();
    }
    addScore(name, score) {
       this.scores.push([name, score]);
-      this.cleanScores();
+      this.compileScores();
       this.writeScores();
    }
    writeScores() {
       window.localStorage.setItem("scores", JSON.stringify(this.scores));
    }
-   cleanScores() {
+   compileScores() {
       this.scores = this.scores.sort(
          (a, b) => {
             return b[1] - a[1];

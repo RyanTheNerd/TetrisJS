@@ -18,16 +18,14 @@ const RotationChart = {
    I: [3, 7, 11, 15, 2, 6, 10, 14, 1, 5, 9, 13, 0, 4, 8, 12],
 }
 export default class Tetromino {
-   constructor(playField, position, type) {
+   constructor(playField, type, position=[3, 0]) {
+      this.playField = playField;
+      this.enabled = false;
       this.x = position[0];
       this.y = position[1];
-      this.playField = playField;
       this.type = type;
       this.prevType = null;
        
-      if(this.type == "random") {
-         this.type = this.playField.game.randomTetromino();
-      }
       this.rotationChart = (this.type == 'I') ? RotationChart.I : RotationChart.standard;
       
       let colors = {
@@ -42,7 +40,7 @@ export default class Tetromino {
       this.color = colors[this.type];
       
       this.pattern = TetrominoPatterns[this.type];
-      
+
       this.cells = [];
       [
          [0, 1, 2, 3],
@@ -52,14 +50,15 @@ export default class Tetromino {
       ].forEach((y, j) => {
          y.forEach((x, k) => {
             if(this.pattern.includes(x)) {
-               let cell = new Cell(this.playField, this, k + this.x, j + this.y, this.color, x);
+               let cell = new Cell(this, k + this.x, j + this.y, this.color, x);
                this.cells.push(cell);
             }
          });
       });
    }
-   enable() {
-         this.playField.cells.push(...this.cells);
+   addToPlayField() {
+      this.cells.forEach((cell) => this.playField.addCell(cell));
+      this.enabled = true;
    }
    rotate(direction) {
       let rotateCount = 0;
@@ -102,15 +101,18 @@ export default class Tetromino {
       }
       return false;
    }
-   fall() {
+   drop() {
       while(this.move(0, 1));
+   }
+   solidify() {
+      this.cells.forEach((cell) => this.playField.solidifyCell(cell));
    }
 }
 
 export class Cell {
-   constructor(playField, tetromino, x, y, color, address) {
-      this.playField = playField;
+   constructor(tetromino, x, y, color, address) {
       this.tetromino = tetromino;
+      this.playField = this.tetromino.playField;
       this.x = x;
       this.y = y;
       this.color = color;

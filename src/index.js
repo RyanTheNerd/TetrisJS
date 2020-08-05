@@ -8,6 +8,7 @@ const PARAMS = {
    dm: {fullName: "darkMode", type: "bool", default: false},
    reset: {fullName: "resetScores", type: "bool", default: false},
    music: {fullName: "enableMusic", type: "bool", default: false},
+   name: {fullName: "name", type: "str", default: "you"}
 };
 
 
@@ -20,6 +21,6 @@ const config = Object.entries(PARAMS).reduce((config, [param, props]) => {
    return config;
 }, {});
 
-console.log(config);
+
 
 const game = new Game(config);
