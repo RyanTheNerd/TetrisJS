@@ -48,13 +48,13 @@ export default class Game {
       }
 
       this.scoreboard = new Scoreboard(this);
+      this.inputManager = new InputManager(this);
       this.displayManager = new DisplayManager({
          game: this,
          w: 10, h: 20, 
          seed: config.seed,
          playbackData: config.playbackData,
       });
-      this.inputManager = new InputManager(this);
 
 
       this.playField = new PlayField({
@@ -121,7 +121,7 @@ export default class Game {
          this.score += this.consecutiveTetris > 1 ? 1200 : 800;
       }
       else {
-         this.score += clearedRows + 100;
+         this.score += clearedRows * 100;
          this.consecutiveTetris = 0;
       }
       this.changeLevel();
