@@ -4,7 +4,7 @@
   "description": "A tetris clone written in vanilla JS",
   "main": "main.js",
   "scripts": {
-    "test": "webpack -d --mode=development --watch",
+    "test": "webpack-dev-server",
     "build": "webpack --mode=production"
   },
   "repository": {
@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "babel-loader": "^8.0.6",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
   }
 }

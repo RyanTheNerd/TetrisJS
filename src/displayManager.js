@@ -1,6 +1,5 @@
 /* DisplayManager: In charge of all drawing and executing game actions
    changeFPT(level): changes the frames per tick of the game based on level
-   handleInput: Executes pending actions from inputManager
    drawText(text, x, y, fontSize, textAlign): Draws text on the DisplayManager
    refresh: Runs the corresponding screen based on the game state
    drawPlayField: Draws the playfield and makes the game tick
