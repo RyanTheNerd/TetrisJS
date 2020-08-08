@@ -52,13 +52,19 @@ export default class DisplayManager {
       });
    }
    drawPausedScreen() {
+      let padX = this.canvas.width / 10;
+      let padY = this.canvas.height / 20;
+
       this.drawPlayField();
       this.clear(0.5);
-      this.drawText("PAUSED", null, 150, "32px");
-      this.drawText("CONTROLS:", null, 150 + 45, "18px");
+      this.drawText("PAUSED", null, padY * 3, "32px");
+      this.drawText("CONTROLS:", null, padY * 5, "18px", 'center');
       
-      let prevY = 150 + 45;
-      this.controls.forEach((control) => this.drawText(control, null, prevY += 32, '16px', "left"));
+      let prevY = padY * 5;
+      this.controls.forEach((control) => {
+         this.drawText(`${control[0]}:`, padX, prevY += padY, '16px', "left");
+         this.drawText(control[1], this.canvas.width - padX, prevY, '16px', 'right');
+      });
    }
    drawPlayField() {
       this.drawTetrominoGuide(this.game.currentTetromino);

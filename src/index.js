@@ -22,6 +22,4 @@ const config = Object.entries(PARAMS).reduce((config, [param, props]) => {
    return config;
 }, {});
 
-
-
 const game = new Game(config);

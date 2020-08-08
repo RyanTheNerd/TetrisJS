@@ -68,7 +68,7 @@ class Key {
       this.canTurbo = canTurbo;
    }
    getDesc() {
-      return `${this.keyDesc}: ${this.actionDesc}`;
+      return [this.keyDesc, this.actionDesc];
    }
    getAction() {
       return this.actionName;
